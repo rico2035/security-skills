@@ -1,0 +1,29 @@
+{
+  "name": "rico2035-security-skills",
+  "owner": {
+    "name": "Ric S Kolluri",
+    "email": "ric@novatar.ai"
+  },
+  "metadata": {
+    "description": "Security and compliance audit skills for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "security-audit",
+      "description": "Comprehensive security and compliance audit toolkit — PHI/PII detection, OWASP Top 10, secrets scanning, tenant isolation, audit trails, plus opt-in modules for PQC crypto, FDCPA/TCPA, and HITRUST CSF",
+      "source": "./plugins/security-audit",
+      "strict": false,
+      "skills": [
+        "./plugins/security-audit/skills/phi-pii-detection",
+        "./plugins/security-audit/skills/tenant-isolation",
+        "./plugins/security-audit/skills/owasp-top10",
+        "./plugins/security-audit/skills/secrets-audit",
+        "./plugins/security-audit/skills/audit-trail",
+        "./plugins/security-audit/skills/pqc-crypto",
+        "./plugins/security-audit/skills/fdcpa-tcpa",
+        "./plugins/security-audit/skills/hitrust-csf"
+      ]
+    }
+  ]
+}

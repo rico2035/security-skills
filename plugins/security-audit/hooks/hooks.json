@@ -1,0 +1,10 @@
+{
+  "hooks": [
+    {
+      "type": "command",
+      "event": "PreToolUse",
+      "matcher": "Edit|Write|MultiEdit",
+      "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/security_hook.py\" \"$TOOL_INPUT\""
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "security-audit",
+  "version": "1.0.0",
+  "description": "Comprehensive security and compliance audit toolkit for any codebase — HIPAA, SOC 2, OWASP, PQC, FDCPA/TCPA, HITRUST",
+  "author": {
+    "name": "Ric S Kolluri",
+    "email": "ric@novatar.ai"
+  },
+  "repository": "https://github.com/rico2035/security-skills",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "hipaa",
+    "owasp",
+    "compliance",
+    "audit",
+    "phi",
+    "pii",
+    "pqc",
+    "soc2",
+    "hitrust",
+    "fdcpa",
+    "tcpa"
+  ]
+}
