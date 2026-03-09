@@ -1,8 +1,29 @@
-# Security Skills
+# Security Skills - Security & Compliance Audit Toolkit for Claude Code
 
-Security and compliance audit skills for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Scans your codebase for vulnerabilities, PHI/PII leaks, hardcoded secrets, tenant isolation failures, and compliance gaps across HIPAA, SOC 2, OWASP, HITRUST, FDCPA/TCPA, and PQC standards.
+> **A comprehensive security and compliance audit plugin for Claude Code. Scans your codebase for vulnerabilities, PHI/PII leaks, hardcoded secrets, tenant isolation failures, and compliance gaps across HIPAA, SOC 2, OWASP, HITRUST, FDCPA/TCPA, and PQC standards.**
 
-## Installation
+Security Skills brings automated security auditing directly into your AI-assisted development workflow. Catch vulnerabilities before they ship, not after.
+
+---
+
+## What is Security Skills?
+
+Security Skills is a **Claude Code plugin** that provides on-demand security and compliance audits for any codebase. It provides:
+
+| Feature | Description |
+|---------|-------------|
+| **PHI/PII Detection** | Find sensitive data exposure in logs, errors, and API responses |
+| **OWASP Top 10** | Scan for all 10 critical web application vulnerabilities |
+| **Secrets Scanning** | Detect hardcoded API keys, passwords, and private keys |
+| **Tenant Isolation** | Verify multi-tenant data segregation across all queries |
+| **Audit Trail** | Check completeness of security event logging |
+| **Compliance Scoring** | Scorecard across HIPAA, SOC 2, HITRUST, FDCPA/TCPA |
+| **Real-Time Hooks** | Catch insecure code as it's written, not after |
+| **Stack Auto-Detection** | Tailors patterns to your framework, ORM, and language |
+
+---
+
+## Quick Start
 
 ### Option 1: Claude Code Plugin (Recommended)
 
@@ -30,6 +51,8 @@ git submodule add https://github.com/rico2035/security-skills.git
 .\security-skills\setup.ps1       # Windows
 ```
 
+---
+
 ## Usage
 
 ```
@@ -44,6 +67,8 @@ git submodule add https://github.com/rico2035/security-skills.git
 /security-audit hitrust      # HITRUST CSF status
 /security-audit pre-deploy   # Pre-deployment security gate
 ```
+
+---
 
 ## Modules
 
@@ -65,6 +90,8 @@ git submodule add https://github.com/rico2035/security-skills.git
 | **FDCPA/TCPA** | Debt collection or automated consumer communications |
 | **HITRUST CSF** | Healthcare projects targeting enterprise certification |
 
+---
+
 ## Stack Auto-Detection
 
 The skill auto-detects your project's technology stack and tailors search patterns accordingly:
@@ -72,6 +99,8 @@ The skill auto-detects your project's technology stack and tailors search patter
 - **Languages:** TypeScript, JavaScript, Python, Go, Java, Ruby, Rust
 - **Frameworks:** NestJS, Express, FastAPI, Django, Spring Boot, Rails
 - **ORMs:** Prisma, TypeORM, Sequelize, SQLAlchemy, Django ORM
+
+---
 
 ## Compliance Coverage
 
@@ -85,6 +114,8 @@ The skill auto-detects your project's technology stack and tailors search patter
 | TCPA | Automated communications consent and revocation |
 | FIPS 203/204/205 | ML-KEM, ML-DSA, SLH-DSA implementation verification |
 
+---
+
 ## Report Format
 
 The audit produces a structured report with:
@@ -94,6 +125,18 @@ The audit produces a structured report with:
 - Priority remediation queue (ordered by severity)
 - Actionable fix guidance with file locations
 
+### Severity Levels
+
+| Severity | Criteria | SLA |
+|----------|----------|-----|
+| **Critical** | Active data exposure, auth bypass, RCE, SQL injection | Block deploy, fix immediately |
+| **High** | Missing tenant isolation, weak crypto, missing audit logs | Fix within 7 days |
+| **Medium** | Missing rate limiting, verbose errors, outdated deps | Fix within 30 days |
+| **Low** | Missing security headers, minor config issues | Fix within 90 days |
+| **Info** | Best practice recommendations | Backlog |
+
+---
+
 ## Real-Time Hooks
 
 When installed as a plugin, a `PreToolUse` hook runs on every `Edit` and `Write` operation, catching:
@@ -101,6 +144,76 @@ When installed as a plugin, a `PreToolUse` hook runs on every `Edit` and `Write`
 - Hardcoded secrets and API keys
 - Injection-prone patterns (`eval`, `innerHTML`, `$queryRawUnsafe`)
 
+---
+
+## Directory Structure
+
+```
+security-skills/
+├── .claude-plugin/
+│   └── marketplace.json                  # Plugin marketplace manifest
+├── plugins/
+│   └── security-audit/
+│       ├── .claude-plugin/
+│       │   └── plugin.json               # Plugin metadata
+│       ├── commands/
+│       │   └── security-audit.md         # /security-audit slash command
+│       ├── skills/
+│       │   ├── phi-pii-detection/        # HIPAA PHI/PII scanning
+│       │   ├── tenant-isolation/         # Multi-tenant verification
+│       │   ├── owasp-top10/              # OWASP Top 10 (A01-A10)
+│       │   ├── secrets-audit/            # API keys, passwords, private keys
+│       │   ├── audit-trail/              # Audit logging completeness
+│       │   ├── pqc-crypto/               # FIPS 203/204/205 (opt-in)
+│       │   ├── fdcpa-tcpa/               # Debt collection rules (opt-in)
+│       │   └── hitrust-csf/              # HITRUST 19-domain check (opt-in)
+│       ├── hooks/
+│       │   ├── hooks.json                # PreToolUse hook config
+│       │   └── security_hook.py          # Real-time PHI/secrets detector
+│       └── README.md
+├── setup.sh                              # Unix install (submodule fallback)
+├── setup.ps1                             # Windows install (submodule fallback)
+├── package.json
+├── LICENSE
+└── README.md
+```
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
+
+---
+
 ## License
 
-MIT
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## Author
+
+**Ric S Kolluri** | [Novatar.ai](https://novatar.ai)
+
+Security Skills was built for AI-assisted development workflows — designed for healthcare SaaS, fintech, and any team that needs compliance-grade security auditing baked into their development process.
+
+---
+
+## Credits
+
+- Built for use with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and AI-assisted development tools
+- Part of the [Novatar.ai](https://novatar.ai) development ecosystem
+- Companion to [PRIME](https://github.com/rico2035/prime_master) — Progressive Release Implementation & Management Ecosystem
+
+---
+
+<p align="center">
+  <strong>Ship secure code, every time.</strong>
+  <br><br>
+  Made with AI by <a href="https://novatar.ai">Novatar.ai</a>
+</p>
