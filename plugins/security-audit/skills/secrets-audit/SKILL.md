@@ -1,6 +1,6 @@
 ---
 name: secrets-audit
-description: Detect hardcoded secrets, API keys, tokens, and credentials in source code and configuration
+description: "Detects hardcoded secrets, API keys, tokens, passwords, and credentials in source code, config files, and git history. Use before commits or open-sourcing code, during security reviews and code audits, or when the user mentions leaked keys, exposed secrets, .env hygiene, or credential scanning."
 ---
 
 # Secrets & Configuration Audit

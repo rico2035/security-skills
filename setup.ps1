@@ -21,6 +21,12 @@ if (-not (Test-Path ".claude\commands")) {
 # Copy the main security-audit command
 Copy-Item "$ScriptDir\plugins\security-audit\commands\security-audit.md" ".claude\commands\security-audit.md"
 
+# Copy the skill directories
+New-Item -ItemType Directory -Path ".claude\skills" -Force | Out-Null
+Get-ChildItem "$ScriptDir\plugins\security-audit\skills" | ForEach-Object {
+    Copy-Item $_.FullName ".claude\skills\" -Recurse -Force
+}
+
 Write-Host ""
 Write-Host "========================================"
 Write-Host "  Installation Complete!"
@@ -28,6 +34,12 @@ Write-Host "========================================"
 Write-Host ""
 Write-Host "Installed:"
 Write-Host "  - .claude\commands\security-audit.md"
+Write-Host "  - .claude\skills\ (8 skills: audit-trail, fdcpa-tcpa, hitrust-csf,"
+Write-Host "    owasp-top10, phi-pii-detection, pqc-crypto, secrets-audit,"
+Write-Host "    tenant-isolation)"
+Write-Host ""
+Write-Host "Note: the real-time security hook is only available via the plugin"
+Write-Host "install, not this fallback."
 Write-Host ""
 Write-Host "Usage:"
 Write-Host "  /security-audit              Full audit"

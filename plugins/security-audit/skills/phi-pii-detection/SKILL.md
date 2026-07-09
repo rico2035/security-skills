@@ -1,11 +1,11 @@
 ---
 name: phi-pii-detection
-description: Detect PHI/PII leaks in logs, errors, API responses, and source code for HIPAA compliance
+description: "Detects PHI and PII leaks in logs, error messages, API responses, and source code for HIPAA compliance. Use when auditing logging or error handling, reviewing code that touches patient data, preparing a production deploy in a healthcare app, or the user mentions HIPAA, PHI, PII, or data leaks."
 ---
 
 # PHI/PII Leak Detection
 
-Scan your codebase for Protected Health Information (PHI) and Personally Identifiable Information (PII) exposure — the #1 HIPAA violation vector.
+Scan your codebase for Protected Health Information (PHI) and Personally Identifiable Information (PII) exposure, the #1 HIPAA violation vector.
 
 ## When to Use
 

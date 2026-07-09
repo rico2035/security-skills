@@ -1,6 +1,6 @@
 ---
 name: owasp-top10
-description: Scan codebase for OWASP Top 10 (2021) web application vulnerabilities
+description: "Scans a codebase for OWASP Top 10 (2021) vulnerabilities including injection, broken access control, and misconfiguration. Use when running a security audit, reviewing auth or user-input handling, preparing for a pentest or production deploy, or the user mentions OWASP, vulnerabilities, or a security scan."
 ---
 
 # OWASP Top 10 Scan

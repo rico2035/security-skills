@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Security Skills — Submodule Fallback Installer
+# Security Skills - Submodule Fallback Installer
 # For full features (hooks, agents, auto-update), use the plugin system instead:
 #   claude plugin marketplace add rico2035/security-skills
 #   claude plugin install security-audit@rico2035-security-skills
@@ -21,6 +21,10 @@ mkdir -p .claude/commands
 # Copy the main security-audit command
 cp "$SCRIPT_DIR/plugins/security-audit/commands/security-audit.md" .claude/commands/security-audit.md
 
+# Copy the skill directories
+mkdir -p .claude/skills
+cp -R "$SCRIPT_DIR/plugins/security-audit/skills/." .claude/skills/
+
 echo ""
 echo "========================================"
 echo "  Installation Complete!"
@@ -28,6 +32,12 @@ echo "========================================"
 echo ""
 echo "Installed:"
 echo "  - .claude/commands/security-audit.md"
+echo "  - .claude/skills/ (8 skills: audit-trail, fdcpa-tcpa, hitrust-csf,"
+echo "    owasp-top10, phi-pii-detection, pqc-crypto, secrets-audit,"
+echo "    tenant-isolation)"
+echo ""
+echo "Note: the real-time security hook is only available via the plugin"
+echo "install, not this fallback."
 echo ""
 echo "Usage:"
 echo "  /security-audit              Full audit"

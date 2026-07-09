@@ -1,6 +1,6 @@
 ---
 name: fdcpa-tcpa
-description: Verify FDCPA and TCPA compliance for debt collection and automated communications
+description: "Verifies FDCPA, Regulation F, and TCPA compliance for debt collection and automated consumer contact. Use when reviewing dialer, SMS, or voice AI code, auditing call time windows, frequency caps, consent, or DNC handling, or the user mentions FDCPA, TCPA, Reg F, debt collection, or robocall rules."
 ---
 
 # FDCPA/TCPA Compliance (Opt-In)

@@ -1,7 +1,7 @@
 {
   "name": "security-skills",
-  "version": "1.0.0",
-  "description": "Security and compliance audit skills for Claude Code — HIPAA, SOC 2, OWASP, PQC, FDCPA/TCPA, HITRUST",
+  "version": "1.1.0",
+  "description": "Security and compliance audit skills for Claude Code: HIPAA, SOC 2, OWASP, PQC, FDCPA/TCPA, HITRUST",
   "author": "Ric S Kolluri <ric@novatar.ai>",
   "license": "MIT",
   "repository": {

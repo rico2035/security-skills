@@ -1,6 +1,6 @@
 ---
 name: hitrust-csf
-description: Check HITRUST Common Security Framework compliance status across 19 domains
+description: "Checks HITRUST CSF implementation status across all 19 domains and reports per-domain completion. Use when preparing for a HITRUST assessment or recertification, responding to enterprise healthcare due diligence, or the user mentions HITRUST, CSF controls, or healthcare compliance posture."
 ---
 
 # HITRUST CSF Status Check (Opt-In)
@@ -134,10 +134,10 @@ Domain                                    Status      Score
 OVERALL                                                93%
 
 Controls Needing Attention:
-  - 0.1.b: Annual policy review — schedule needed
-  - 3.2.c: Risk treatment plans — documentation incomplete
-  - 12.1.c: Business continuity testing — annual test due
-  - 13.2.a: SOC 2 Type II audit — schedule for next quarter
+  - 0.1.b: Annual policy review (schedule needed)
+  - 3.2.c: Risk treatment plans (documentation incomplete)
+  - 12.1.c: Business continuity testing (annual test due)
+  - 13.2.a: SOC 2 Type II audit (schedule for next quarter)
 ```
 
 ## Severity

@@ -1,6 +1,6 @@
 ---
 name: tenant-isolation
-description: Verify multi-tenant data segregation across all database queries and API endpoints
+description: "Verifies multi-tenant data segregation across database queries, API endpoints, caches, and background jobs. Use when adding or reviewing data access code, auditing for SOC 2 or HIPAA, or the user mentions tenant isolation, cross-tenant leaks, row-level security, or multi-tenancy."
 ---
 
 # Tenant Isolation Verification
@@ -22,7 +22,7 @@ Every database query in service/repository files must filter by tenant identifie
 
 **Prisma:**
 ```regex
-# Find queries — each must include tenantId or organizationId
+# Find queries: each must include tenantId or organizationId
 prisma\.\w+\.(findMany|findFirst|findUnique|update|delete|count|aggregate|groupBy)\(
 
 # Dangerous: raw queries without tenant filtering
@@ -111,7 +111,7 @@ CREATE POLICY tenant_isolation ON accounts
 
 ### Apply tenant guard globally:
 ```typescript
-// NestJS — apply to all routes
+// NestJS: apply to all routes
 @UseGuards(TenantGuard)
 @Controller('accounts')
 export class AccountsController { ... }

@@ -1,6 +1,6 @@
 ---
 name: audit-trail
-description: Verify audit trail completeness for security events, data access, and compliance requirements
+description: "Verifies audit trail completeness for security events, data access, and admin actions against HIPAA, SOC 2, and HITRUST requirements. Use when auditing logging coverage, adding services that handle sensitive data, reviewing incident response readiness, or the user mentions audit logs or compliance evidence."
 ---
 
 # Audit Trail Completeness
@@ -16,7 +16,7 @@ Verify that all security-relevant events, data access operations, and administra
 
 ## What Must Be Logged
 
-### Critical Events (must log — compliance requirement)
+### Critical Events (must log, compliance requirement)
 | Event | Required Fields |
 |-------|----------------|
 | Login success/failure | userId, timestamp, IP, userAgent, method |

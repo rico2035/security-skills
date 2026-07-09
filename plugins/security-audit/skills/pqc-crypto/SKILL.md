@@ -1,6 +1,6 @@
 ---
 name: pqc-crypto
-description: Audit post-quantum cryptography implementation for FIPS 203/204/205 compliance
+description: "Audits post-quantum cryptography against FIPS 203, 204, and 205, covering hybrid mode, key management, and deprecated algorithms. Use when a project implements ML-KEM, ML-DSA, or SLH-DSA, when planning NIST PQC migration, or the user mentions post-quantum, Kyber, Dilithium, or quantum-resistant crypto."
 ---
 
 # PQC Cryptography Audit (Opt-In)

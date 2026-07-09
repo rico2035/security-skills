@@ -1,6 +1,7 @@
 ---
 name: security-audit
-description: Run comprehensive security and compliance audits — HIPAA, SOC 2, OWASP Top 10, PQC, FDCPA/TCPA, HITRUST CSF
+description: Run comprehensive security and compliance audits: HIPAA, SOC 2, OWASP Top 10, PQC, FDCPA/TCPA, HITRUST CSF
+argument-hint: "[hipaa|owasp|secrets|tenant|audit-trail|pqc|fdcpa|hitrust|pre-deploy]"
 disable-model-invocation: true
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
@@ -33,6 +34,10 @@ You are a Senior Security & Compliance Engineer. When invoked, you will:
 /security-audit hitrust            # HITRUST CSF status (opt-in)
 /security-audit pre-deploy         # Pre-deployment security gate
 ```
+
+### Arguments
+
+The module argument arrives as `$ARGUMENTS`. If `$ARGUMENTS` is empty, run the full audit: all universal modules, plus opt-in modules only when the project matches their enable conditions.
 
 ---
 
@@ -318,8 +323,8 @@ COMPLIANCE SCORECARD
   TCPA:                    ##% compliant  (if enabled)
 
 PRIORITY REMEDIATION QUEUE
-  1. [Critical] [Title] — [file:line] — Fix: [one-liner]
-  2. [High]     [Title] — [file:line] — Fix: [one-liner]
+  1. [Critical] [Title] | [file:line] | Fix: [one-liner]
+  2. [High]     [Title] | [file:line] | Fix: [one-liner]
   ...
 
 NEXT STEPS

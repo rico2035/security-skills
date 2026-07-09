@@ -1,6 +1,6 @@
 # Security Audit Plugin
 
-Comprehensive security and compliance audit toolkit for Claude Code. Scans your codebase for vulnerabilities, compliance gaps, and security misconfigurations.
+Security and compliance audit toolkit for Claude Code. Scans your codebase for vulnerabilities, compliance gaps, and security misconfigurations.
 
 ## Modules
 
@@ -39,13 +39,23 @@ Comprehensive security and compliance audit toolkit for Claude Code. Scans your 
 
 ## Hooks
 
-This plugin includes a `PreToolUse` hook that runs on `Edit` and `Write` operations. It checks for:
+This plugin includes a `PreToolUse` hook that runs on `Edit`, `Write`, and `MultiEdit` operations.
 
-- PHI/PII in logging statements
-- Hardcoded secrets and API keys
-- Injection-prone patterns (`eval`, `innerHTML`, `$queryRawUnsafe`)
+It hard-blocks (permission denied) when real secret material is detected:
 
-The hook will warn you in real-time before insecure code is written.
+- API keys and tokens: `sk-`, `sk-ant-`, `AKIA`, `ghp_`, `gho_`, `glpat-`, Slack `xox` tokens, Stripe `whsec_`
+- Private key blocks
+- Connection strings with embedded credentials
+
+It asks for your confirmation on risky patterns:
+
+- Likely PHI/PII in logging statements
+- Hardcoded passwords
+- Injection-prone patterns: `eval`, `new Function`, `$queryRawUnsafe` / `$executeRawUnsafe`, `innerHTML` assignment, `dangerouslySetInnerHTML`, `document.write`, `subprocess` with `shell=True`, `os.system`
+
+PHI and password checks are skipped for test, fixture, mock, and seed file paths. Secret checks apply everywhere.
+
+The hook requires Python 3.9+ available as `python3` on PATH. If Python is missing, the hook reports an error but does not block your work.
 
 ## Supported Stacks
 

@@ -1,6 +1,6 @@
 # Security Skills - Security & Compliance Audit Toolkit for Claude Code
 
-> **A comprehensive security and compliance audit plugin for Claude Code. Scans your codebase for vulnerabilities, PHI/PII leaks, hardcoded secrets, tenant isolation failures, and compliance gaps across HIPAA, SOC 2, OWASP, HITRUST, FDCPA/TCPA, and PQC standards.**
+> **A security and compliance audit plugin for Claude Code. Scans your codebase for vulnerabilities, PHI/PII leaks, hardcoded secrets, tenant isolation failures, and compliance gaps across HIPAA, SOC 2, OWASP, HITRUST, FDCPA/TCPA, and PQC standards.**
 
 Security Skills brings automated security auditing directly into your AI-assisted development workflow. Catch vulnerabilities before they ship, not after.
 
@@ -27,6 +27,8 @@ Security Skills is a **Claude Code plugin** that provides on-demand security and
 
 ### Option 1: Claude Code Plugin (Recommended)
 
+From the terminal:
+
 ```bash
 # Add the marketplace
 claude plugin marketplace add rico2035/security-skills
@@ -35,9 +37,16 @@ claude plugin marketplace add rico2035/security-skills
 claude plugin install security-audit@rico2035-security-skills
 ```
 
+Or from inside a Claude Code session:
+
+```
+/plugin marketplace add rico2035/security-skills
+/plugin install security-audit@rico2035-security-skills
+```
+
 Restart Claude Code after installation. This gives you:
 - `/security-audit` slash command
-- Real-time security hooks on Edit/Write operations
+- Real-time security hook on Edit, Write, and MultiEdit operations
 - Auto-updates via marketplace
 
 ### Option 2: Git Submodule (Fallback)
@@ -46,10 +55,18 @@ Restart Claude Code after installation. This gives you:
 # Add as submodule
 git submodule add https://github.com/rico2035/security-skills.git
 
-# Run setup (copies command to .claude/commands/)
+# Run setup
 ./security-skills/setup.sh        # Unix/Mac
 .\security-skills\setup.ps1       # Windows
 ```
+
+The setup script installs the `/security-audit` command to `.claude/commands/` and all eight skills to `.claude/skills/`. The fallback does not install the real-time hook. Only the plugin install gets hooks.
+
+### Requirements
+
+- Claude Code with plugin support
+- Python 3.9+ available as `python3` on PATH (needed by the real-time hook)
+- git (for the submodule fallback)
 
 ---
 
@@ -139,10 +156,21 @@ The audit produces a structured report with:
 
 ## Real-Time Hooks
 
-When installed as a plugin, a `PreToolUse` hook runs on every `Edit` and `Write` operation, catching:
-- PHI/PII in logging statements
-- Hardcoded secrets and API keys
-- Injection-prone patterns (`eval`, `innerHTML`, `$queryRawUnsafe`)
+When installed as a plugin, a `PreToolUse` hook runs on every `Edit`, `Write`, and `MultiEdit` operation.
+
+**Hard block (permission denied)** when real secret material is detected:
+- API keys and tokens: `sk-`, `sk-ant-`, `AKIA`, `ghp_`, `gho_`, `glpat-`, Slack `xox` tokens, Stripe `whsec_`
+- Private key blocks
+- Connection strings with embedded credentials
+
+**Ask for confirmation** on risky patterns:
+- Likely PHI/PII in logging statements
+- Hardcoded passwords
+- Injection-prone patterns: `eval`, `new Function`, `$queryRawUnsafe` / `$executeRawUnsafe`, `innerHTML` assignment, `dangerouslySetInnerHTML`, `document.write`, `subprocess` with `shell=True`, `os.system`
+
+PHI and password checks are skipped for test, fixture, mock, and seed file paths. Secret checks apply everywhere.
+
+The hook requires Python 3.9+ available as `python3` on PATH. If Python is missing, the hook reports an error but does not block your work.
 
 ---
 
@@ -200,7 +228,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 **Ric S Kolluri** | [Novatar.ai](https://novatar.ai)
 
-Security Skills was built for AI-assisted development workflows — designed for healthcare SaaS, fintech, and any team that needs compliance-grade security auditing baked into their development process.
+Security Skills was built for AI-assisted development workflows. It is designed for healthcare SaaS, fintech, and any team that needs compliance-grade security auditing baked into their development process.
 
 ---
 
@@ -208,7 +236,7 @@ Security Skills was built for AI-assisted development workflows — designed for
 
 - Built for use with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and AI-assisted development tools
 - Part of the [Novatar.ai](https://novatar.ai) development ecosystem
-- Companion to [PRIME](https://github.com/rico2035/prime_master) — Progressive Release Implementation & Management Ecosystem
+- Companion to [PRIME](https://github.com/rico2035/prime_master) (Progressive Release Implementation & Management Ecosystem)
 
 ---
 
