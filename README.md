@@ -156,12 +156,12 @@ The audit produces a structured report with:
 
 ## Real-Time Hooks
 
-When installed as a plugin, a `PreToolUse` hook runs on every `Edit`, `Write`, and `MultiEdit` operation.
+When installed as a plugin, a `PreToolUse` hook runs on every `Edit`, `Write`, `MultiEdit`, and `NotebookEdit` operation.
 
 **Hard block (permission denied)** when real secret material is detected:
-- API keys and tokens: `sk-`, `sk-ant-`, `AKIA`, `ghp_`, `gho_`, `glpat-`, Slack `xox` tokens, Stripe `whsec_`
+- API keys and tokens: `sk-`, `sk-ant-`, `sk-proj-`, `sk-or-`, Stripe `sk_live_`/`sk_test_`/`rk_live_` and `whsec_`, `AKIA`, Google `AIza`, SendGrid `SG.`, `ghp_`, `gho_`, `github_pat_`, `glpat-`, `npm_`, Slack `xox` tokens, Supabase `sb_secret_` keys and `service_role` JWTs
 - Private key blocks
-- Connection strings with embedded credentials
+- Connection strings with embedded credentials (interpolated env vars and placeholder passwords are allowed)
 
 **Ask for confirmation** on risky patterns:
 - Likely PHI/PII in logging statements
