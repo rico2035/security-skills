@@ -23,18 +23,28 @@ Detect hardcoded secrets, API keys, tokens, passwords, and credentials in source
 
 # Cloud provider keys
 (AKIA[0-9A-Z]{16})                        # AWS Access Key ID
-(sk-[a-zA-Z0-9]{20,})                     # OpenAI / Stripe secret key
+(sk-[a-zA-Z0-9]{20,})                     # OpenAI legacy secret key
+(sk-proj-[a-zA-Z0-9\-_]{20,})            # OpenAI project key
+([sr]k_(live|test)_[a-zA-Z0-9]{20,})      # Stripe secret / restricted key
 (pk_live_[a-zA-Z0-9]{20,})                # Stripe publishable key
 (whsec_[a-zA-Z0-9]{20,})                  # Stripe webhook secret
 (sk-or-[a-zA-Z0-9\-]{20,})               # OpenRouter key
 (re_[a-zA-Z0-9]{20,})                     # Resend key
 (phc_[a-zA-Z0-9]{20,})                    # PostHog key
 (AC[a-z0-9]{32})                          # Twilio Account SID
+(AIza[0-9A-Za-z\-_]{35})                  # Google API key
+(SG\.[A-Za-z0-9_\-]{16,}\.[A-Za-z0-9_\-]{16,})  # SendGrid key
 (ghp_[a-zA-Z0-9]{36})                     # GitHub personal access token
 (gho_[a-zA-Z0-9]{36})                     # GitHub OAuth token
+(github_pat_[A-Za-z0-9_]{22,})            # GitHub fine-grained PAT
 (glpat-[a-zA-Z0-9\-]{20,})               # GitLab personal access token
-(xoxb-|xoxp-|xapp-)                       # Slack tokens
+(npm_[a-zA-Z0-9]{36})                     # npm access token
+(xoxb-|xoxp-|xoxc-|xoxe-|xapp-)           # Slack tokens
 (sk-ant-[a-zA-Z0-9\-]{20,})              # Anthropic key
+(sb_secret_[A-Za-z0-9_\-]{20,})           # Supabase secret key
+# Supabase service_role JWT: a JWT whose payload segment contains
+# "service_role" base64-encoded at any alignment offset
+eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]*(c2VydmljZV9yb2xl|NlcnZpY2Vfcm9sZ|zZXJ2aWNlX3JvbGU)
 ```
 
 ### Passwords and Credentials
