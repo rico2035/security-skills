@@ -336,6 +336,64 @@ NEXT STEPS
 
 ---
 
+## Machine-readable output
+
+In addition to the markdown report above, ALSO produce a machine-readable JSON
+report for ingestion by Foundri and write it to `./.foundri/report.json`
+(create the `.foundri` directory if it does not exist).
+
+The JSON report MUST conform to the pinned `report_format_version: 1` contract
+(`plugins/security-audit/schema/report.schema.json`). Foundri owns this format —
+do not invent, rename, or drop fields. Required shape:
+
+- `report_format_version`: the integer `1`, always.
+- `plugin_version`: the plugin version string (e.g. `"1.2.0"`).
+- `project`: `{ name, repo_url, stack: { language, framework, orm } }`, using the
+  stack detected in Step 0. Use `null` for stack entries that do not apply.
+- `run`: `{ commit_sha, branch, started_at, finished_at }` with ISO 8601 UTC
+  timestamps. Resolve `commit_sha`/`branch` from git when available.
+- `summary`: finding counts as `{ critical, high, medium, low, info }` integers.
+- `findings`: one object per finding with `module`, `rule_id`, `severity`,
+  `title`, `file_path`, `line_start`, `line_end`, `evidence`, `remediation`,
+  `frameworks`.
+- `control_results`: one object per evaluated control with `framework`,
+  `control`, `status` (`pass` | `fail` | `warn`), and `finding_rule_ids`.
+
+Controlled vocabularies:
+
+- `severity`: `critical` | `high` | `medium` | `low` | `info`
+- `module`: `phi-pii` | `owasp-top10` | `secrets-audit` | `tenant-isolation` |
+  `audit-trail` | `pqc-crypto` | `fdcpa-tcpa` | `hitrust-csf`
+- `framework`: `hipaa` | `soc2` | `owasp` | `hitrust` | `fdcpa_tcpa` | `pqc`
+
+REDACTION IS A HARD RULE: evidence is always redacted. Never write live secret
+material, PHI, or PII into the JSON report. `evidence.snippet_redacted` shows
+the code shape with the sensitive value replaced by a `<redacted ...>` marker,
+and `evidence.match` is a masked descriptor such as
+`"AWS access key (redacted)"` — never the matched text itself.
+
+Example (abridged; see `plugins/security-audit/schema/report.example.json` for
+a full valid example):
+
+```json
+{
+  "report_format_version": 1,
+  "plugin_version": "1.2.0",
+  "project": { "name": "acme-api", "repo_url": "https://github.com/acme/acme-api", "stack": { "language": "typescript", "framework": "nestjs", "orm": "prisma" } },
+  "run": { "commit_sha": "9f3c1ad", "branch": "main", "started_at": "2026-08-30T14:12:00Z", "finished_at": "2026-08-30T14:13:20Z" },
+  "summary": { "critical": 1, "high": 0, "medium": 0, "low": 0, "info": 0 },
+  "findings": [
+    { "module": "secrets-audit", "rule_id": "hardcoded-aws-key", "severity": "critical", "title": "Hardcoded AWS access key", "file_path": "src/config/aws.ts", "line_start": 12, "line_end": 12, "evidence": { "snippet_redacted": "const key = '<redacted AWS key>'", "match": "AWS access key (redacted)" }, "remediation": "Move the key to an environment variable and rotate it.", "frameworks": ["owasp", "soc2"] }
+  ],
+  "control_results": [ { "framework": "owasp", "control": "A02", "status": "fail", "finding_rule_ids": ["hardcoded-aws-key"] } ]
+}
+```
+
+The markdown report above remains the primary human-readable output; the JSON
+report is an additional artifact, not a replacement.
+
+---
+
 ## Severity Classification
 
 | Severity | Criteria | SLA |

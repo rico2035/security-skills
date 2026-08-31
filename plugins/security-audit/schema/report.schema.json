@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/rico2035/security-skills/plugins/security-audit/schema/report.schema.json",
+  "title": "Foundri Security Audit Report",
+  "description": "Pinned machine-readable audit report contract for Foundri ingestion. Foundri owns report_format_version; do not invent fields.",
+  "type": "object",
+  "required": [
+    "report_format_version",
+    "plugin_version",
+    "project",
+    "run",
+    "summary",
+    "findings",
+    "control_results"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "report_format_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "plugin_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "type": "object",
+      "required": ["name", "repo_url", "stack"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "repo_url": { "type": "string" },
+        "stack": {
+          "type": "object",
+          "required": ["language", "framework", "orm"],
+          "additionalProperties": false,
+          "properties": {
+            "language": { "type": ["string", "null"] },
+            "framework": { "type": ["string", "null"] },
+            "orm": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["commit_sha", "branch", "started_at", "finished_at"],
+      "additionalProperties": false,
+      "properties": {
+        "commit_sha": { "type": "string" },
+        "branch": { "type": "string" },
+        "started_at": { "type": "string", "format": "date-time" },
+        "finished_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["critical", "high", "medium", "low", "info"],
+      "additionalProperties": false,
+      "properties": {
+        "critical": { "type": "integer", "minimum": 0 },
+        "high": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "low": { "type": "integer", "minimum": 0 },
+        "info": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "module",
+          "rule_id",
+          "severity",
+          "title",
+          "file_path",
+          "line_start",
+          "line_end",
+          "evidence",
+          "remediation",
+          "frameworks"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "module": {
+            "type": "string",
+            "enum": [
+              "phi-pii",
+              "owasp-top10",
+              "secrets-audit",
+              "tenant-isolation",
+              "audit-trail",
+              "pqc-crypto",
+              "fdcpa-tcpa",
+              "hitrust-csf"
+            ]
+          },
+          "rule_id": { "type": "string", "minLength": 1 },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low", "info"]
+          },
+          "title": { "type": "string", "minLength": 1 },
+          "file_path": { "type": "string" },
+          "line_start": { "type": "integer", "minimum": 0 },
+          "line_end": { "type": "integer", "minimum": 0 },
+          "evidence": {
+            "type": "object",
+            "required": ["snippet_redacted", "match"],
+            "additionalProperties": false,
+            "description": "Evidence is always redacted: never live secret material, only masked descriptors.",
+            "properties": {
+              "snippet_redacted": { "type": "string" },
+              "match": { "type": "string" }
+            }
+          },
+          "remediation": { "type": "string" },
+          "frameworks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["hipaa", "soc2", "owasp", "hitrust", "fdcpa_tcpa", "pqc"]
+            }
+          }
+        }
+      }
+    },
+    "control_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["framework", "control", "status", "finding_rule_ids"],
+        "additionalProperties": false,
+        "properties": {
+          "framework": {
+            "type": "string",
+            "enum": ["hipaa", "soc2", "owasp", "hitrust", "fdcpa_tcpa", "pqc"]
+          },
+          "control": { "type": "string", "minLength": 1 },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "warn"]
+          },
+          "finding_rule_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

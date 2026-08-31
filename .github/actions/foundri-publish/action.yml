@@ -1,0 +1,22 @@
+name: foundri-publish
+description: Validate a security-audit report against the pinned v1 contract and publish it to Foundri.
+inputs:
+  report-path:
+    description: Path to the audit report JSON produced by /security-audit.
+    required: false
+    default: .foundri/report.json
+  ingest-url:
+    description: Foundri ingest endpoint (FOUNDRI_INGEST_URL).
+    required: true
+  token:
+    description: Per-project Foundri token. Pass ${{ secrets.FOUNDRI_TOKEN }}.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Validate and push report to Foundri
+      shell: bash
+      env:
+        FOUNDRI_INGEST_URL: ${{ inputs.ingest-url }}
+        FOUNDRI_TOKEN: ${{ inputs.token }}
+      run: python "${GITHUB_ACTION_PATH}/../../../tools/foundri-publish/foundri_publish.py" push "${{ inputs.report-path }}"

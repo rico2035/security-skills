@@ -82,3 +82,57 @@ The skill auto-detects your project's technology stack:
 | FDCPA / Reg F | Call restrictions, consent, DNC |
 | TCPA | Automated communications compliance |
 | FIPS 203/204/205 | Post-quantum cryptography |
+
+## Feeding Foundri
+
+The plugin can feed a Foundri console with machine-readable output. Three pieces, all optional:
+
+### 1. JSON report emitter
+
+`/security-audit` still prints the human-readable markdown report, and additionally writes a machine-readable report to `./.foundri/report.json` in the pinned `report_format_version: 1` contract. The contract lives in `schema/report.schema.json` with a full example in `schema/report.example.json` and a second fixture in `schema/report.fixture.json`. Evidence is always redacted — never live secrets, PHI, or PII.
+
+### 2. Hook-event logger
+
+Every hook decision (`block`, `ask`, `allow`) is appended as one JSON line to an append-only sink. Each line carries `id`, `decision`, `rule`, `tool`, `file_path`, `match` (a redacted descriptor, never the matched text), `actor` (git user email, else `"local"`), and `at` (ISO 8601 UTC). Logging fails open: an unwritable sink never blocks your edit.
+
+### 3. Publisher
+
+`tools/foundri-publish/foundri_publish.py` (Python 3.9+, stdlib only):
+
+```bash
+# Push a report to Foundri (validates against the v1 contract first)
+python tools/foundri-publish/foundri_publish.py push .foundri/report.json
+
+# Follow the hook-event sink and stream new events to Foundri
+python tools/foundri-publish/foundri_publish.py tail --from-start
+```
+
+Both commands exit non-zero on validation or HTTP failure.
+
+### Environment variables
+
+| Variable | Used by | Purpose |
+|----------|---------|---------|
+| `FOUNDRI_HOOK_LOG` | hook logger, `tail` | Hook-event sink path. Default `~/.foundri/hook-events.jsonl` |
+| `FOUNDRI_INGEST_URL` | `push` | Foundri ingest endpoint for reports |
+| `FOUNDRI_EVENTS_URL` | `tail` | Foundri ingest endpoint for hook events |
+| `FOUNDRI_TOKEN` | `push`, `tail` | Per-project bearer token |
+
+### CI setup (GitHub Actions)
+
+`.github/workflows/foundri-audit.yml` runs the audit in CI and publishes the report via the composite action in `.github/actions/foundri-publish/`. To enable it in your repo:
+
+1. Add the `FOUNDRI_TOKEN` repo secret (per-project token from Foundri).
+2. Add the `FOUNDRI_INGEST_URL` repo variable (your ingest endpoint).
+3. Add an `ANTHROPIC_API_KEY` (or `CLAUDE_CODE_OAUTH_TOKEN`) repo secret so the audit step can run.
+4. Push to `main` or trigger the `Foundri audit` workflow manually.
+
+### Tests
+
+```bash
+# Hook logger unit tests (stdlib only)
+python plugins/security-audit/hooks/test_security_hook.py
+
+# Schema/example/fixture agreement (requires the jsonschema package)
+python plugins/security-audit/schema/test_report_schema.py
+```
