@@ -67,6 +67,26 @@ def validate_report(report) -> list:
         errors.append("summary must contain exactly: critical, high, medium, low, info")
     elif not all(isinstance(summary[k], int) and summary[k] >= 0 for k in SEVERITIES):
         errors.append("summary counts must be non-negative integers")
+    else:
+        # Foundri stores this tally as sent rather than deriving it from the
+        # rows it inserts. A report whose summary disagrees with its own
+        # findings therefore publishes numbers nothing downstream can correct,
+        # so refuse it here at the producer.
+        findings = report.get("findings")
+        if isinstance(findings, list):
+            tally = dict.fromkeys(SEVERITIES, 0)
+            for finding in findings:
+                if isinstance(finding, dict):
+                    severity = finding.get("severity")
+                    if severity in tally:
+                        tally[severity] += 1
+            if tally != summary:
+                mismatched = ", ".join(
+                    f"{key}: summary={summary[key]} findings={tally[key]}"
+                    for key in sorted(SEVERITIES)
+                    if summary[key] != tally[key]
+                )
+                errors.append(f"summary does not match the findings it ships ({mismatched})")
 
     for i, finding in enumerate(report.get("findings") or []):
         where = f"findings[{i}]"
