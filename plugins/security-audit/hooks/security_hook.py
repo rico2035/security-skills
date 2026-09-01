@@ -13,8 +13,12 @@ Requires Python 3.9+ available as python3 on PATH.
 
 import fnmatch
 import json
+import os
 import re
+import subprocess
 import sys
+import uuid
+from datetime import datetime, timezone
 
 # Paths where PHI/PII and password patterns are expected (test data, fixtures).
 # Secret-material patterns still apply everywhere.
@@ -119,6 +123,69 @@ def is_test_path(file_path: str) -> bool:
     return any(fnmatch.fnmatch(normalized, g) for g in TEST_PATH_GLOBS)
 
 
+# --- Foundri hook-event logging ---
+
+def _hook_log_path() -> str:
+    """Sink path from FOUNDRI_HOOK_LOG, default ~/.foundri/hook-events.jsonl."""
+    override = os.environ.get("FOUNDRI_HOOK_LOG")
+    if override:
+        return os.path.expanduser(override)
+    return os.path.join(os.path.expanduser("~"), ".foundri", "hook-events.jsonl")
+
+
+def _git_actor() -> str:
+    """Git user email if resolvable, else 'local'."""
+    try:
+        out = subprocess.run(
+            ["git", "config", "user.email"],
+            capture_output=True, text=True, timeout=2,
+        )
+        email = (out.stdout or "").strip()
+        return email if out.returncode == 0 and email else "local"
+    except Exception:
+        return "local"
+
+
+def _masked(message: str) -> str:
+    """Derive a redacted descriptor from a rule message.
+
+    Rule messages never contain the matched text, so the descriptor is safe;
+    we only normalize the wording to make the redaction explicit. Live secret
+    material is never written to the sink.
+    """
+    if message.endswith(" detected"):
+        return message[: -len(" detected")] + " (redacted)"
+    return message + " (redacted)"
+
+
+def log_decision(decision: str, rules: list, tool_name: str, file_path: str) -> None:
+    """Append one JSON line per decision to the Foundri hook-event sink.
+
+    decision: "block" | "ask" | "allow". rules: matched rule messages (empty
+    for allow). Fail open: any logging error is swallowed so a sink problem
+    can never block the user's edit.
+    """
+    try:
+        path = _hook_log_path()
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        record = {
+            "id": uuid.uuid4().hex,
+            "decision": decision,
+            "rule": rules[0] if rules else None,
+            "tool": tool_name,
+            "file_path": file_path,
+            "match": _masked(rules[0]) if rules else None,
+            "actor": _git_actor(),
+            "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        }
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record) + "\n")
+    except Exception:
+        pass
+
+
 def scan(patterns, content: str, ignorecase: bool) -> list:
     flags = re.IGNORECASE if ignorecase else 0
     return [msg for pat, msg in patterns if re.search(pat, content, flags)]
@@ -154,10 +221,13 @@ def main():
         reason = "SECURITY: blocked. " + "; ".join(blockers) + \
             ". Move secrets to environment variables and rotate any exposed key."
         decision = "deny"
+        log_decision("block", blockers, tool_name, file_path)
     elif warnings:
         reason = "SECURITY: review needed. " + "; ".join(warnings)
         decision = "ask"
+        log_decision("ask", warnings, tool_name, file_path)
     else:
+        log_decision("allow", [], tool_name, file_path)
         sys.exit(0)
 
     print(json.dumps({

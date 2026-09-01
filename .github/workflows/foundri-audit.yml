@@ -1,0 +1,41 @@
+name: Foundri audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  audit-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      # Runs /security-audit, which writes the markdown report to the session
+      # and the machine-readable report to .foundri/report.json.
+      # Requires an ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN) repo secret.
+      - name: Run security audit
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: "/security-audit"
+          allowed_tools: "Read,Write,Edit,Glob,Grep,Bash"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # Validates .foundri/report.json against the pinned v1 contract and
+      # POSTs it to Foundri. Fails the job on validation or HTTP errors.
+      # Requires the FOUNDRI_TOKEN repo secret and the FOUNDRI_INGEST_URL repo variable.
+      - name: Publish report to Foundri
+        uses: ./.github/actions/foundri-publish
+        with:
+          report-path: .foundri/report.json
+          ingest-url: ${{ vars.FOUNDRI_INGEST_URL }}
+          token: ${{ secrets.FOUNDRI_TOKEN }}

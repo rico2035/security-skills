@@ -1,0 +1,99 @@
+{
+  "report_format_version": 1,
+  "plugin_version": "1.2.0",
+  "project": {
+    "name": "fixture-billing-api",
+    "repo_url": "https://github.com/example/fixture-billing-api",
+    "stack": {
+      "language": "python",
+      "framework": "fastapi",
+      "orm": "sqlalchemy"
+    }
+  },
+  "run": {
+    "commit_sha": "1a2b3c4",
+    "branch": "main",
+    "started_at": "2026-09-01T09:00:00Z",
+    "finished_at": "2026-09-01T09:01:45Z"
+  },
+  "summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0,
+    "info": 1
+  },
+  "findings": [
+    {
+      "module": "tenant-isolation",
+      "rule_id": "missing-tenant-filter",
+      "severity": "high",
+      "title": "Query without tenant filter",
+      "file_path": "app/services/invoices.py",
+      "line_start": 31,
+      "line_end": 34,
+      "evidence": {
+        "snippet_redacted": "session.query(Invoice).filter(Invoice.id == invoice_id)",
+        "match": "query missing tenant filter (redacted)"
+      },
+      "remediation": "Add the tenant_id predicate to every query or route access through a tenant-scoped repository.",
+      "frameworks": ["soc2", "owasp"]
+    },
+    {
+      "module": "secrets-audit",
+      "rule_id": "hardcoded-api-key",
+      "severity": "medium",
+      "title": "API key committed in configuration module",
+      "file_path": "app/config/settings.py",
+      "line_start": 7,
+      "line_end": 7,
+      "evidence": {
+        "snippet_redacted": "PAYMENTS_API_KEY = \"<redacted API key>\"",
+        "match": "provider API key (redacted)"
+      },
+      "remediation": "Load the key from an environment variable or secret manager and rotate the exposed key.",
+      "frameworks": ["owasp", "soc2"]
+    },
+    {
+      "module": "audit-trail",
+      "rule_id": "missing-audit-log",
+      "severity": "info",
+      "title": "Sensitive read path not covered by audit logging",
+      "file_path": "app/routers/invoices.py",
+      "line_start": 55,
+      "line_end": 60,
+      "evidence": {
+        "snippet_redacted": "@router.get(\"/invoices/{invoice_id}\")",
+        "match": "endpoint without audit logging (redacted)"
+      },
+      "remediation": "Record an audit event with userId, tenantId, action, resourceType, resourceId, and timestamp.",
+      "frameworks": ["hipaa", "soc2"]
+    }
+  ],
+  "control_results": [
+    {
+      "framework": "owasp",
+      "control": "A01",
+      "status": "fail",
+      "finding_rule_ids": ["missing-tenant-filter"]
+    },
+    {
+      "framework": "owasp",
+      "control": "A02",
+      "status": "warn",
+      "finding_rule_ids": ["hardcoded-api-key"]
+    },
+    {
+      "framework": "hipaa",
+      "control": "164.312(b)",
+      "status": "warn",
+      "finding_rule_ids": ["missing-audit-log"]
+    },
+    {
+      "framework": "soc2",
+      "control": "CC7.2",
+      "status": "pass",
+      "finding_rule_ids": []
+    }
+  ]
+}
