@@ -18,10 +18,10 @@
   },
   "summary": {
     "critical": 2,
-    "high": 5,
-    "medium": 9,
-    "low": 3,
-    "info": 4
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "info": 0
   },
   "findings": [
     {
@@ -37,7 +37,10 @@
         "match": "AWS access key (redacted)"
       },
       "remediation": "Move the key to an environment variable and rotate it.",
-      "frameworks": ["owasp", "soc2"]
+      "frameworks": [
+        "owasp",
+        "soc2"
+      ]
     },
     {
       "module": "phi-pii",
@@ -52,7 +55,10 @@
         "match": "PHI/PII in logger statement (redacted)"
       },
       "remediation": "Remove PHI fields from log statements; log only opaque record IDs through the audit service.",
-      "frameworks": ["hipaa", "soc2"]
+      "frameworks": [
+        "hipaa",
+        "soc2"
+      ]
     }
   ],
   "control_results": [
@@ -60,13 +66,17 @@
       "framework": "owasp",
       "control": "A02",
       "status": "fail",
-      "finding_rule_ids": ["hardcoded-aws-key"]
+      "finding_rule_ids": [
+        "hardcoded-aws-key"
+      ]
     },
     {
       "framework": "hipaa",
       "control": "164.312(b)",
       "status": "fail",
-      "finding_rule_ids": ["phi-in-logs"]
+      "finding_rule_ids": [
+        "phi-in-logs"
+      ]
     },
     {
       "framework": "soc2",
